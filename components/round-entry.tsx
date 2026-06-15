@@ -31,8 +31,16 @@ export function RoundEntry({
   const [callerId, setCallerId] = useState<string | null>(null)
   const [correct, setCorrect] = useState<boolean | null>(null)
   const [handInputs, setHandInputs] = useState<Record<string, string>>({})
+  const [wrongMaxInput, setWrongMaxInput] = useState("")
 
   const hands = useMemo(() => {
+    if (correct === false && callerId) {
+      const n = Number.parseInt(wrongMaxInput, 10)
+      const max = Number.isFinite(n) ? n : 0
+      const result: Record<string, number> = {}
+      for (const p of players) result[p.id] = p.id === callerId ? max : 0
+      return result
+    }
     const parsed: Record<string, number> = {}
     for (const p of players) {
       const raw = handInputs[p.id]
@@ -40,7 +48,7 @@ export function RoundEntry({
       parsed[p.id] = Number.isFinite(n) ? n : 0
     }
     return parsed
-  }, [handInputs, players])
+  }, [handInputs, wrongMaxInput, correct, callerId, players])
 
   const preview = useMemo(() => {
     if (!callerId || correct === null) return null
@@ -75,47 +83,89 @@ export function RoundEntry({
       </div>
 
       <div className="mt-5">
-        <Label className="text-sm text-muted-foreground">Points in each hand</Label>
-        <div className="mt-2 flex flex-col gap-2">
-          {players.map((p) => {
-            const isCaller = callerId === p.id
-            return (
-              <div
-                key={p.id}
-                className="flex items-center gap-3 rounded-xl border border-border bg-secondary/40 p-2 pl-3"
-              >
-                <button
-                  type="button"
-                  onClick={() => setCallerId(isCaller ? null : p.id)}
-                  className={`flex h-11 flex-1 items-center justify-between rounded-lg px-3 text-left text-sm font-semibold transition-colors ${
-                    isCaller
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-transparent text-foreground hover:bg-secondary"
-                  }`}
-                  aria-pressed={isCaller}
-                >
-                  <span className="truncate">{p.name}</span>
-                  {isCaller && <span className="ml-2 shrink-0 text-xs font-bold uppercase">Called</span>}
-                </button>
-                <Input
-                  type="number"
-                  inputMode="numeric"
-                  min={0}
-                  value={handInputs[p.id] ?? ""}
-                  onChange={(e) =>
-                    setHandInputs((prev) => ({ ...prev, [p.id]: e.target.value }))
-                  }
-                  placeholder="0"
-                  className="h-11 w-20 text-center text-base"
-                  aria-label={`Points in ${p.name}'s hand`}
-                />
-              </div>
-            )
-          })}
-        </div>
-        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-          Tap a name to mark who called the show.
-        </p>
+        {correct === false ? (
+          <>
+            <Label className="text-sm text-muted-foreground">Who called the show?</Label>
+            <div className="mt-2 flex flex-col gap-2">
+              {players.map((p) => {
+                const isCaller = callerId === p.id
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => setCallerId(isCaller ? null : p.id)}
+                    className={`flex h-11 w-full items-center justify-between rounded-xl border border-border px-3 text-left text-sm font-semibold transition-colors ${
+                      isCaller
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-secondary/40 text-foreground hover:bg-secondary"
+                    }`}
+                    aria-pressed={isCaller}
+                  >
+                    <span className="truncate">{p.name}</span>
+                    {isCaller && <span className="ml-2 shrink-0 text-xs font-bold uppercase">Called</span>}
+                  </button>
+                )
+              })}
+            </div>
+            <div className="mt-4">
+              <Label className="text-sm text-muted-foreground">Highest hand value (added to caller)</Label>
+              <Input
+                type="number"
+                inputMode="numeric"
+                min={0}
+                value={wrongMaxInput}
+                onChange={(e) => setWrongMaxInput(e.target.value)}
+                placeholder="0"
+                className="mt-2 h-12 text-center text-base"
+                aria-label="Highest hand value this round"
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <Label className="text-sm text-muted-foreground">Points in each hand</Label>
+            <div className="mt-2 flex flex-col gap-2">
+              {players.map((p) => {
+                const isCaller = callerId === p.id
+                return (
+                  <div
+                    key={p.id}
+                    className="flex items-center gap-3 rounded-xl border border-border bg-secondary/40 p-2 pl-3"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setCallerId(isCaller ? null : p.id)}
+                      className={`flex h-11 flex-1 items-center justify-between rounded-lg px-3 text-left text-sm font-semibold transition-colors ${
+                        isCaller
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-transparent text-foreground hover:bg-secondary"
+                      }`}
+                      aria-pressed={isCaller}
+                    >
+                      <span className="truncate">{p.name}</span>
+                      {isCaller && <span className="ml-2 shrink-0 text-xs font-bold uppercase">Called</span>}
+                    </button>
+                    <Input
+                      type="number"
+                      inputMode="numeric"
+                      min={0}
+                      value={handInputs[p.id] ?? ""}
+                      onChange={(e) =>
+                        setHandInputs((prev) => ({ ...prev, [p.id]: e.target.value }))
+                      }
+                      placeholder="0"
+                      className="h-11 w-20 text-center text-base"
+                      aria-label={`Points in ${p.name}'s hand`}
+                    />
+                  </div>
+                )
+              })}
+            </div>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              Tap a name to mark who called the show.
+            </p>
+          </>
+        )}
       </div>
 
       <div className="mt-5">
