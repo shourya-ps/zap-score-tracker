@@ -44,7 +44,7 @@ export function SetupScreen({ onStart }: SetupScreenProps) {
 
   return (
     <div className="mx-auto w-full max-w-md px-4 py-8">
-      <header className="mb-8 flex flex-col items-center text-center">
+      <header className="mb-8 -mx-4 bg-gradient-to-br from-card to-[oklch(0.2_0.08_288)] border-b border-border px-4 py-8 rounded-b-xl flex flex-col items-center text-center">
         <div className="mb-4 flex size-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
           <Zap className="size-8" fill="currentColor" aria-hidden="true" />
         </div>

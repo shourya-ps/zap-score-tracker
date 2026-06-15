@@ -41,7 +41,7 @@ export function GameScreen({
 
   return (
     <div className="mx-auto w-full max-w-md px-4 py-6">
-      <header className="mb-5 flex items-center justify-between">
+      <header className="bg-gradient-to-br from-card to-[oklch(0.2_0.08_288)] border-b border-border px-4 py-4 -mx-4 mb-5 rounded-b-xl flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Zap className="size-5" fill="currentColor" aria-hidden="true" />
