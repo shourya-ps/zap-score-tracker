@@ -10,7 +10,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Zap Score Tracker',
+  title: 'Zap ♠♥ Score Tracker',
   description: 'Track scores for the card game Zap — 13 cards down to 1 and back up.',
   generator: 'v0.app',
   manifest: '/manifest.json',
@@ -38,7 +38,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   colorScheme: 'dark',
-  themeColor: '#26221a',
+  themeColor: '#0d0d1a',
 }
 
 export default function RootLayout({
